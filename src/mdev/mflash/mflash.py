@@ -2,6 +2,7 @@ import os
 import sys
 import collections
 from time import sleep
+from shutil import which
 from subprocess import Popen, run, CalledProcessError, PIPE, DEVNULL
 
 
@@ -9,9 +10,11 @@ class Mflash():
     def __init__(self, chip, progress, debugger='jlink_swd', context=None):
         self.progress = progress
         self.context = context
-        hostos = 'osx' if sys.platform == 'darwin' else 'Linux64' if sys.platform == 'linux2' else 'win'
         cwd = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-        openocd = '%s/openocd/%s/openocd_mxos' % (cwd, hostos)
+        openocd = which('openocd')
+        if not openocd:
+            hostos = 'osx' if sys.platform == 'darwin' else 'Linux64' if sys.platform == 'linux2' else 'win'
+            openocd = '%s/openocd/%s/openocd_mxos' % (cwd, hostos)
         self._cmd_hdr = ' '.join([
             openocd,
             '-s %s' % cwd,
