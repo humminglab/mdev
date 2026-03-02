@@ -34,12 +34,15 @@ build_root = os.path.join(env_root, 'build')
 if sys.platform == 'darwin':
     cmake_exe = os.path.join(build_root, 'CMake.app', 'Contents', 'bin', 'cmake')
     ninja_exe = os.path.join(build_root, 'ninja')
+    gn_exe = os.path.join(build_root, 'gn')
 elif sys.platform == 'linux':
     cmake_exe = os.path.join(build_root, 'cmake', 'bin', 'cmake')
     ninja_exe = os.path.join(build_root, 'ninja')
+    gn_exe = os.path.join(build_root, 'gn')
 elif sys.platform == 'win32':
     cmake_exe = os.path.join(build_root, 'cmake', 'bin', 'cmake.exe')
     ninja_exe = os.path.join(build_root, 'ninja.exe')
+    gn_exe = os.path.join(build_root, 'gn.exe')
 else:
     log.err(f'{sys.platform} is not support')
     exit(1)
@@ -82,6 +85,14 @@ def get_env():  # type: () -> None
     
     check_and_download(cmake_exe, f'cmake{toolchains_afterfix[sys.platform]}', 'CMake')
     check_and_download(ninja_exe, f'ninja{toolchains_afterfix[sys.platform]}', 'Ninja')
+    check_and_download(gn_exe, f'gn{toolchains_afterfix[sys.platform]}', 'GN')
+
+    if sys.platform == 'win32':
+        python3exe = sys.executable.replace('python.exe', 'python3.exe')
+        if not os.path.exists(python3exe):
+            log.inf(f'Executable "python3.exe" was not found.')
+            log.inf(f'Creating "python3.exe" ...')
+            os.link(sys.executable, python3exe)
 
     return env_root.replace("\\", "/")
 

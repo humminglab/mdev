@@ -1,0 +1,7 @@
+# General configuration options
+# Author: Snow Yang
+
+mainmenu "MXOS Configuration"
+
+source "${MXOS_KCONFIG_MODULES}"
+source "mxos/Kconfig"

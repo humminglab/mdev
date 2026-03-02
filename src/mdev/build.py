@@ -69,7 +69,7 @@ fortune_txt = (
     '没有文档等于白做 - 沈建华',
     '一个百思不得其解的奇怪问题一定是个很傻逼的问题 - 杨海波',
     '要有产品思维 - 徐炜',
-    '代码千万条，注释第一条，命名不规范，同事两行泪 - SnowYang'
+    '代码千万条，注释第一条，命名不规范，同事两行泪 - SnowYang',
     '解决代码的编译警告有两个办法，一个是规范代码，另一个是关闭编译器警告 - SnowYang'
 )
 
@@ -116,6 +116,14 @@ def build(project: str, module: str, flash: str, clean: bool, kconfig: str, defi
         $ mdev build demos/helloworld emc3080
     """
 
+    if not Path('.mdev').exists():
+        print(Panel(f"[red]Error! We are not at a mdev project's root directory.", style='red'))
+        return
+
+    if clean and kconfig:
+        print(Panel(f"[red]Error! Option '-c' and '-k' cannot coexist.", style='red'))
+        return
+
     env_path = get_env()
     project = str(Path(project)).replace('\\', '/')
     build_diretory = f'build/{project}-{module}'
@@ -149,5 +157,20 @@ def build(project: str, module: str, flash: str, clean: bool, kconfig: str, defi
           title="Congratulation!", style='green'))
 
     txt = fortune_txt[random.randint(0, len(fortune_txt)-1)]
-    txt = txt.decode('UTF-8').encode('GBK') if sys.platform == 'win32' else txt
     print(Panel(txt, style='cyan'))
+
+@click.command()
+def clean() -> None:
+    """
+    Remove the build directory.
+
+    Example:
+
+        $ mdev clean
+    """
+
+    if not Path('.mdev').exists():
+        print(Panel(f"[red]Error! We are not at a mdev project's root directory.", style='red'))
+        return
+
+    shutil.rmtree('build', ignore_errors=True)
