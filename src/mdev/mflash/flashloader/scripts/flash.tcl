@@ -14,13 +14,16 @@ set MFLASH_ARG1_LOC      $($MFLASH_CONFIG_START + 0x18)
 set MFLASH_BUF_LOC       $($MFLASH_CONFIG_START + 0x1C)
 
 proc memread32 {address} {
+
+    # mem2array memar 32 $address 1
+    # return $memar(0)
     set value [read_memory $address 32 1]
     return [lindex $value 0]
 }
 
 proc load_image_at_offset {fname foffset target_addr length} {
-    set chan [file tempfile tmp_file]
-    close $chan
+    # Jim Tcl: file tempfile returns filename (not channel like Tcl 8.6)
+    set tmp_file [file tempfile]
 
     exec dd if=$fname of=$tmp_file bs=1 skip=$foffset count=$length
     load_image $tmp_file $target_addr bin
@@ -28,6 +31,7 @@ proc load_image_at_offset {fname foffset target_addr length} {
 }
 
 proc load_image_bin {fname foffset address length } {
+    # load_image $fname [expr $address - $foffset] bin $address $length
     load_image_at_offset $fname $foffset $address $length
 }
 
@@ -55,7 +59,8 @@ proc mflash_cmd_run { timeout } {
         if { $::MFLASH_RUN_WITH_HALT == 1 } {
             resume
         }
-        after 3
+        #after 3
+        after 2
         if { $::MFLASH_RUN_WITH_HALT == 1 } {
             halt
         }
