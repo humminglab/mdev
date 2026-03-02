@@ -19,16 +19,11 @@ proc memread32 {address} {
 }
 
 proc load_image_at_offset {fname foffset target_addr length} {
-    # Create temporary file name
-    set tmp_file [file tempfile]
+    set chan [file tempfile tmp_file]
+    close $chan
 
-    # Extract the needed portion using dd
     exec dd if=$fname of=$tmp_file bs=1 skip=$foffset count=$length
-
-    # Load the temporary file directly at target address
     load_image $tmp_file $target_addr bin
-
-    # Clean up
     file delete $tmp_file
 }
 
