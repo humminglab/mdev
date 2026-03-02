@@ -61,7 +61,7 @@ def write(chip: str, addr: str, image: str):
         try:
             __mflash.write(image, int(addr, 0))
         except CalledProcessError as e:
-            click.echo(f"\nFailed: {e.cmd}")
+            click.echo(f"\nFailed: {e.cmd}\n")
             exit(1)
 
 def update_read(out, bar):
@@ -107,7 +107,7 @@ def read(chip: str, addr: str, size: str, image: str):
         try:
             __mflash.read(image, int(addr, 0), size)
         except CalledProcessError as e:
-            click.echo(f"\nFailed: {e.cmd}")
+            click.echo(f"\nFailed: {e.cmd}\n")
 
 
 @click.command()
@@ -143,7 +143,7 @@ def erase(chip: str, addr: int, size: int):
         try:
             __mflash.erase(int(addr, 0), size)
         except CalledProcessError as e:
-            click.echo(f"\nFailed: {e.cmd}")
+            click.echo(f"\nFailed: {e.cmd}\n")
         bar.start_task(bar.erase_task)
         bar.update(bar.erase_task, completed=100)
 

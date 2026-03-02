@@ -151,7 +151,7 @@ def build(project: str, module: str, flash: str, clean: bool, kconfig: str, defi
     log.dbg(command)
     ret = subprocess.run(command, shell=True)
     if ret.returncode != 0:
-        click.echo(f"\nFailed: {command}")
+        click.echo(f"\nFailed: {command}\n")
         exit(ret.returncode)
     print(Panel.fit(f"[green]{success}",
           title="Congratulation!", style='green'))
