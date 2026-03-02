@@ -14,14 +14,26 @@ set MFLASH_ARG1_LOC      $($MFLASH_CONFIG_START + 0x18)
 set MFLASH_BUF_LOC       $($MFLASH_CONFIG_START + 0x1C)
 
 proc memread32 {address} {
-    
-    mem2array memar 32 $address 1
-    return $memar(0)
+    set value [read_memory $address 32 1]
+    return [lindex $value 0]
+}
+
+proc load_image_at_offset {fname foffset target_addr length} {
+    # Create temporary file name
+    set tmp_file [file tempfile]
+
+    # Extract the needed portion using dd
+    exec dd if=$fname of=$tmp_file bs=1 skip=$foffset count=$length
+
+    # Load the temporary file directly at target address
+    load_image $tmp_file $target_addr bin
+
+    # Clean up
+    file delete $tmp_file
 }
 
 proc load_image_bin {fname foffset address length } {
-
-    load_image $fname [expr $address - $foffset] bin $address $length
+    load_image_at_offset $fname $foffset $address $length
 }
 
 proc mflash_init { mloader } {
